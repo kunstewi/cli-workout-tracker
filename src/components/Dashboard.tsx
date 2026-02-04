@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Text, useApp, useInput } from 'ink';
-import { addDays, subDays, addWeeks, subWeeks, addMonths, subMonths } from 'date-fns';
+import { addDays, subDays, addWeeks, subWeeks, addMonths, subMonths, startOfMonth, isSameMonth } from 'date-fns';
 import { Calendar } from './Calendar.js';
 import { ExerciseList } from './ExerciseList.js';
 import { YearlyGraph } from './YearlyGraph.js';
@@ -24,6 +24,13 @@ export const Dashboard: React.FC = () => {
         }, 1000);
         return () => clearInterval(interval);
     }, []);
+
+    // Sync currentMonth when selectedDate changes to a different month
+    useEffect(() => {
+        if (!isSameMonth(selectedDate, currentMonth)) {
+            setCurrentMonth(startOfMonth(selectedDate));
+        }
+    }, [selectedDate]);
 
     const showStatus = (message: string) => {
         setStatusMessage(message);
