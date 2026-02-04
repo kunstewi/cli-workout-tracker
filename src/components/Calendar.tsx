@@ -110,7 +110,13 @@ export const Calendar: React.FC<CalendarProps> = ({
                         else if (status === 'future') color = 'gray';
                         else if (status === 'none') color = 'red';
 
-                        if (isSelected) bgColor = 'blue';
+                        // Use status-based highlight color when selected
+                        if (isSelected) {
+                            if (status === 'complete') bgColor = 'green';
+                            else if (status === 'partial') bgColor = 'yellow';
+                            else if (status === 'none') bgColor = 'red';
+                            else bgColor = 'gray'; // future dates
+                        }
 
                         return (
                             <Box key={day.toISOString()} width={4} justifyContent="center">

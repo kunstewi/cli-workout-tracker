@@ -3,7 +3,7 @@ import { Box, Text, useApp, useInput } from 'ink';
 import { addDays, subDays, addWeeks, subWeeks, addMonths, subMonths } from 'date-fns';
 import { Calendar } from './Calendar.js';
 import { ExerciseList } from './ExerciseList.js';
-import { HelpBar } from './HelpBar.js';
+import { YearlyGraph } from './YearlyGraph.js';
 import { AddExerciseForm } from './AddExerciseForm.js';
 import { WorkoutData } from '../types/index.js';
 import { loadData, saveData, updateExercise, formatDate } from '../utils/data.js';
@@ -101,22 +101,8 @@ export const Dashboard: React.FC = () => {
 
     return (
         <Box flexDirection="column" padding={1}>
-            {/* Header */}
-            <Box justifyContent="center" marginBottom={1}>
-                <Text bold color="magentaBright">
-                    ╔══════════════════════════════════════╗
-                </Text>
-            </Box>
-            <Box justifyContent="center">
-                <Text bold color="magentaBright">
-                    ║   🏋️  WORKOUT TRACKER   🏋️           ║
-                </Text>
-            </Box>
-            <Box justifyContent="center" marginBottom={1}>
-                <Text bold color="magentaBright">
-                    ╚══════════════════════════════════════╝
-                </Text>
-            </Box>
+            {/* Yearly Activity Graph */}
+            <YearlyGraph data={data} />
 
             {/* Status Message */}
             {statusMessage && (
@@ -152,8 +138,12 @@ export const Dashboard: React.FC = () => {
                 </Box>
             </Box>
 
-            {/* Help Bar */}
-            <HelpBar mode={mode} />
+            {/* Simple help note */}
+            <Box marginTop={1}>
+                <Text dimColor>Run </Text>
+                <Text color="cyan">workout help</Text>
+                <Text dimColor> for available commands</Text>
+            </Box>
         </Box>
     );
 };
