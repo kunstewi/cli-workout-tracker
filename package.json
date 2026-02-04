@@ -1,0 +1,36 @@
+{
+  "name": "workout-cli",
+  "version": "1.0.0",
+  "description": "CLI-based workout tracker with interactive dashboard",
+  "main": "dist/cli.js",
+  "type": "module",
+  "bin": {
+    "workout": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/cli.js",
+    "link": "npm run build && npm link"
+  },
+  "keywords": [
+    "workout",
+    "cli",
+    "tracker",
+    "fitness"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/ink": "^0.5.2",
+    "@types/node": "^22.13.1",
+    "@types/react": "^19.0.8",
+    "chalk": "^5.4.1",
+    "commander": "^13.1.0",
+    "date-fns": "^4.1.0",
+    "ink": "^5.1.0",
+    "ink-text-input": "^6.0.0",
+    "react": "^18.3.1",
+    "typescript": "^5.7.3"
+  }
+}
