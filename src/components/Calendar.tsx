@@ -102,44 +102,44 @@ export const Calendar: React.FC<CalendarProps> = ({
                         const isSelected = isSameDay(day, selectedDate);
                         const isTodayDate = isToday(day);
 
-                        let color: string = 'white';
+                        let color: string;
                         let bgColor: string | undefined;
 
-                        if (status === 'complete') color = 'green';
-                        else if (status === 'partial') color = 'yellow';
-                        else if (status === 'future') color = 'gray';
-                        else if (status === 'none') color = 'red';
-
-                        // Use status-based highlight color when selected
+                        // When selected, use white text on status-colored background
                         if (isSelected) {
+                            color = 'white';
                             if (status === 'complete') bgColor = 'green';
                             else if (status === 'partial') bgColor = 'yellow';
                             else if (status === 'none') bgColor = 'red';
                             else bgColor = 'gray'; // future dates
+                        } else {
+                            // Non-selected: use status color for text
+                            if (status === 'complete') color = 'green';
+                            else if (status === 'partial') color = 'yellow';
+                            else if (status === 'future') color = 'white';
+                            else if (status === 'none') color = 'red';
+                            else color = 'white';
                         }
+
+                        // Format date with padding for centering in highlight
+                        const dayNum = format(day, 'd');
+                        const displayText = dayNum.length === 1 ? ` ${dayNum} ` : ` ${dayNum}`;
 
                         return (
                             <Box key={day.toISOString()} width={4} justifyContent="center">
                                 <Text
                                     color={color}
                                     backgroundColor={bgColor}
-                                    bold={isTodayDate}
-                                    inverse={isSelected}
+                                    bold={isTodayDate || isSelected}
                                 >
-                                    {format(day, 'd').padStart(2, ' ')}
+                                    {displayText}
                                 </Text>
                             </Box>
                         );
                     })}
                 </Box>
             ))}
-
-            {/* Legend */}
-            <Box marginTop={1} gap={2}>
-                <Text><Text color="green">●</Text> Complete</Text>
-                <Text><Text color="yellow">●</Text> Partial</Text>
-                <Text><Text color="red">●</Text> None</Text>
-            </Box>
         </Box>
     );
 };
+

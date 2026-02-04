@@ -6,7 +6,6 @@ import {
     endOfYear,
     eachDayOfInterval,
     format,
-    getDay,
 } from 'date-fns';
 
 interface YearlyGraphProps {
@@ -52,74 +51,35 @@ export const YearlyGraph: React.FC<YearlyGraphProps> = ({
             case 'complete': return 'green';
             case 'partial': return 'yellow';
             case 'none': return 'red';
-            case 'future': return 'gray';
+            case 'future': return 'white';
         }
     };
 
-    // Group days into weeks (columns)
-    const weeks: (Date | null)[][] = [];
-    let currentWeek: (Date | null)[] = [];
-
-    // Pad the first week with nulls
-    const firstDayOfWeek = getDay(start);
-    for (let i = 0; i < firstDayOfWeek; i++) {
-        currentWeek.push(null);
-    }
-
-    days.forEach((day) => {
-        currentWeek.push(day);
-        if (currentWeek.length === 7) {
-            weeks.push(currentWeek);
-            currentWeek = [];
-        }
-    });
-
-    if (currentWeek.length > 0) {
-        while (currentWeek.length < 7) {
-            currentWeek.push(null);
-        }
-        weeks.push(currentWeek);
-    }
-
-    // Build row data (7 rows for each day of week, columns are weeks)
-    const rowData: { key: string; status: DayStatus | null }[][] = Array.from({ length: 7 }, () => []);
-
-    weeks.forEach((week, weekIndex) => {
-        week.forEach((day, dayIndex) => {
-            if (!day) {
-                rowData[dayIndex].push({ key: `empty-${weekIndex}-${dayIndex}`, status: null });
-            } else {
-                rowData[dayIndex].push({ key: day.toISOString(), status: getDayStatus(day) });
-            }
-        });
-    });
+    // Build horizontal data - all days in sequence
+    const dayData: { key: string; status: DayStatus }[] = days.map((day) => ({
+        key: day.toISOString(),
+        status: getDayStatus(day),
+    }));
 
     return (
         <Box flexDirection="column" marginBottom={1}>
             <Box marginBottom={0}>
                 <Text dimColor>{format(year, 'yyyy')} Activity</Text>
             </Box>
-            <Box flexDirection="column">
-                {rowData.map((row, rowIndex) => (
-                    <Box key={rowIndex}>
-                        {row.map((cell) => (
-                            <Text
-                                key={cell.key}
-                                color={cell.status ? getStatusColor(cell.status) : undefined}
-                                dimColor={cell.status === null}
-                            >
-                                •
-                            </Text>
-                        ))}
-                    </Box>
+            <Box flexWrap="wrap">
+                {dayData.map((cell) => (
+                    <Text
+                        key={cell.key}
+                        color={getStatusColor(cell.status)}
+                    >
+                        •
+                    </Text>
                 ))}
             </Box>
             <Box marginTop={0} gap={2}>
-                <Text dimColor>
-                    <Text color="green">•</Text> done{' '}
-                    <Text color="yellow">•</Text> half{' '}
-                    <Text color="red">•</Text> missed
-                </Text>
+                <Text color="green">• done</Text>
+                <Text color="yellow">• half</Text>
+                <Text color="red">• missed</Text>
             </Box>
         </Box>
     );
