@@ -1,4 +1,4 @@
-# 🏋️ Workout CLI
+# Workout CLI
 
 A terminal-based workout tracker with an interactive dashboard, progress tracking, and GitHub sync.
 
