@@ -71,15 +71,16 @@ export const YearlyGraph: React.FC<YearlyGraphProps> = ({
                     <Text
                         key={cell.key}
                         color={getStatusColor(cell.status)}
+                        bold
                     >
                         •
                     </Text>
                 ))}
             </Box>
             <Box marginTop={0} gap={2}>
-                <Text color="green">• done</Text>
-                <Text color="yellow">• half</Text>
-                <Text color="red">• missed</Text>
+                <Text color="green" bold>• done</Text>
+                <Text color="yellow" bold>• half</Text>
+                <Text color="red" bold>• missed</Text>
             </Box>
         </Box>
     );

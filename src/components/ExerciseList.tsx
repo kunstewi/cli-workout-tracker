@@ -27,11 +27,11 @@ export const ExerciseList: React.FC<ExerciseListProps> = ({ data, selectedDate }
                     const percentage = Math.min((current / target) * 100, 100);
                     const completed = current >= target;
 
-                    // Progress bar
+                    // Progress bar (dot style)
                     const barWidth = 20;
                     const filled = Math.round((percentage / 100) * barWidth);
                     const empty = barWidth - filled;
-                    const progressBar = '█'.repeat(filled) + '░'.repeat(empty);
+                    const progressBar = '•'.repeat(filled) + '·'.repeat(empty);
 
                     return (
                         <Box key={name} marginBottom={0}>
@@ -45,9 +45,8 @@ export const ExerciseList: React.FC<ExerciseListProps> = ({ data, selectedDate }
                                     {String(current).padStart(4)}/{target} {config.unit.padEnd(4)}
                                 </Text>
                                 {' '}
-                                <Text color={completed ? 'green' : percentage > 50 ? 'yellow' : 'red'}>
-                                    {progressBar}
-                                </Text>
+                                <Text color="green">{'•'.repeat(filled)}</Text>
+                                <Text color="white">{'·'.repeat(empty)}</Text>
                                 {' '}
                                 <Text dimColor>{Math.round(percentage)}%</Text>
                             </Text>
