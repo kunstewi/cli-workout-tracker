@@ -4,7 +4,7 @@ import React from 'react';
 import { render } from 'ink';
 import { Command } from 'commander';
 import { Dashboard } from './components/Dashboard.js';
-import { loadData, updateExercise, addExercise, removeExercise, formatDate, addWeeklyWorkout, removeWeeklyWorkout, getWeeklyWorkouts } from './utils/data.js';
+import { loadData, saveData, updateExercise, addExercise, removeExercise, formatDate, addWeeklyWorkout, removeWeeklyWorkout, getWeeklyWorkouts } from './utils/data.js';
 import { pushToGithub, initGitRepo, getGitStatus } from './utils/git.js';
 
 const program = new Command();
@@ -308,7 +308,6 @@ program
 
             if (data.weeklyTemplate) {
                 data.weeklyTemplate[dayLower as 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday'] = [];
-                const { saveData } = require('./utils/data.js');
                 saveData(data);
                 console.log(`✅ Cleared ${dayLower}'s schedule`);
             }
@@ -317,7 +316,6 @@ program
                 validDays.forEach(dayName => {
                     data.weeklyTemplate![dayName as 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday'] = [];
                 });
-                const { saveData } = require('./utils/data.js');
                 saveData(data);
                 console.log('✅ Cleared entire weekly timetable');
             }
