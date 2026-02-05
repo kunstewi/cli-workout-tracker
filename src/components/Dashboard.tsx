@@ -148,7 +148,7 @@ export const Dashboard: React.FC = () => {
             {/* Simple help note */}
             <Box marginTop={1}>
                 <Text dimColor>Run </Text>
-                <Text color="cyan">workout help</Text>
+                <Text color="cyan">wout help</Text>
                 <Text dimColor> for available commands</Text>
             </Box>
         </Box>

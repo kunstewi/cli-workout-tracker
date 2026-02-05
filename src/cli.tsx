@@ -10,7 +10,7 @@ import { pushToGithub, initGitRepo, getGitStatus } from './utils/git.js';
 const program = new Command();
 
 program
-    .name('workout')
+    .name('wout')
     .description('CLI Workout Tracker')
     .version('1.0.0');
 
@@ -25,7 +25,7 @@ program
 // Add command
 program
     .command('add <exercise> <amount>')
-    .description('Add exercise progress (e.g., workout add pushups 20)')
+    .description('Add exercise progress (e.g., wout add pushups 20)')
     .action((exercise: string, amount: string) => {
         const data = loadData();
         const exerciseLower = exercise.toLowerCase();
@@ -55,7 +55,7 @@ program
 // Set command
 program
     .command('set <exercise> <amount>')
-    .description('Set exact exercise value (e.g., workout set running 5)')
+    .description('Set exact exercise value (e.g., wout set running 5)')
     .action((exercise: string, amount: string) => {
         const data = loadData();
         const exerciseLower = exercise.toLowerCase();
@@ -174,7 +174,7 @@ program
 // Config add exercise
 program
     .command('config-add <name> <unit> <dailyTarget>')
-    .description('Add a new exercise (e.g., workout config-add squats reps 50)')
+    .description('Add a new exercise (e.g., wout config-add squats reps 50)')
     .action((name: string, unit: string, dailyTarget: string) => {
         const target = parseInt(dailyTarget);
         if (isNaN(target) || target <= 0) {

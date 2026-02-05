@@ -5,7 +5,7 @@
   "main": "dist/cli.js",
   "type": "module",
   "bin": {
-    "workout": "./dist/cli.js"
+    "wout": "./dist/cli.js"
   },
   "scripts": {
     "build": "tsc",

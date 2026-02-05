@@ -20,7 +20,7 @@ npm run link
 ### Interactive Dashboard
 
 ```bash
-workout
+wout
 ```
 
 Opens an interactive TUI dashboard where you can:
@@ -43,26 +43,26 @@ Opens an interactive TUI dashboard where you can:
 
 ```bash
 # Add to exercise (increments current value)
-workout add pushups 20
-workout add running 5
+wout add pushups 20
+wout add running 5
 
 # Set exact value
-workout set pushups 50
+wout set pushups 50
 
 # View today's status
-workout status
+wout status
 
 # List all exercises
-workout list
+wout list
 
 # Configure exercises
-workout config-add squats reps 50
-workout config-remove squats
+wout config-add squats reps 50
+wout config-remove squats
 
 # Git commands
-workout git-init
-workout git-status
-workout push
+wout git-init
+wout git-status
+wout push
 ```
 
 ## Data Storage
@@ -88,7 +88,7 @@ All data is stored in `~/.workout/data.json`:
 
 1. Initialize git in the data directory:
    ```bash
-   workout git-init
+   wout git-init
    ```
 
 2. Create a GitHub repository and add it as remote:
@@ -101,7 +101,7 @@ All data is stored in `~/.workout/data.json`:
 
 3. Push your workout data anytime:
    ```bash
-   workout push
+   wout push
    ```
 
 ## Default Exercises
@@ -112,7 +112,7 @@ The tracker comes with these default exercises:
 - 💪 Pushups: 100 reps/day
 - 🏋️ Pullups: 50 reps/day
 
-Customize with `workout config-add` and `workout config-remove`.
+Customize with `wout config-add` and `wout config-remove`.
 
 ## Tech Stack
 
