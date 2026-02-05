@@ -14,6 +14,14 @@ const DEFAULT_DATA: WorkoutData = {
         pullups: { unit: 'reps', dailyTarget: 50 },
     },
     logs: {},
+    weeklyTemplate: {
+        monday: [],
+        tuesday: [],
+        wednesday: [],
+        thursday: [],
+        friday: [],
+        saturday: [],
+    },
 };
 
 export function ensureDataDir(): void {
@@ -90,4 +98,98 @@ export function getDataDir(): string {
 
 export function getDataFile(): string {
     return DATA_FILE;
+}
+
+// Weekly Template Functions
+export function getDayOfWeek(date: Date): 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday' {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'] as const;
+    return days[date.getDay()];
+}
+
+export function addWeeklyWorkout(day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday', exerciseName: string, reps: number): WorkoutData {
+    const data = loadData();
+
+    if (!data.weeklyTemplate) {
+        data.weeklyTemplate = {
+            monday: [],
+            tuesday: [],
+            wednesday: [],
+            thursday: [],
+            friday: [],
+            saturday: [],
+        };
+    }
+
+    // Check if exercise exists in the configured exercises
+    if (!data.exercises[exerciseName.toLowerCase()]) {
+        throw new Error(`Exercise "${exerciseName}" not found in configured exercises`);
+    }
+
+    // Check if workout already exists for this day
+    const existingIndex = data.weeklyTemplate[day].findIndex(w => w.exerciseName === exerciseName.toLowerCase());
+
+    if (existingIndex >= 0) {
+        // Update existing workout
+        data.weeklyTemplate[day][existingIndex].reps = reps;
+    } else {
+        // Add new workout
+        data.weeklyTemplate[day].push({
+            exerciseName: exerciseName.toLowerCase(),
+            reps,
+        });
+    }
+
+    saveData(data);
+    return data;
+}
+
+export function removeWeeklyWorkout(day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday', exerciseName: string): WorkoutData {
+    const data = loadData();
+
+    if (!data.weeklyTemplate) {
+        return data;
+    }
+
+    data.weeklyTemplate[day] = data.weeklyTemplate[day].filter(
+        w => w.exerciseName !== exerciseName.toLowerCase()
+    );
+
+    saveData(data);
+    return data;
+}
+
+export function updateWeeklyWorkout(day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday', exerciseName: string, reps: number): WorkoutData {
+    return addWeeklyWorkout(day, exerciseName, reps);
+}
+
+export function getWeeklyWorkouts(day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday') {
+    const data = loadData();
+    return data.weeklyTemplate?.[day] || [];
+}
+
+export function applyWeeklyTemplate(date: Date): WorkoutData {
+    const dayOfWeek = getDayOfWeek(date);
+
+    // Sunday has no template
+    if (dayOfWeek === 'sunday') {
+        return loadData();
+    }
+
+    const data = loadData();
+    const dateStr = formatDate(date);
+    const workouts = data.weeklyTemplate?.[dayOfWeek] || [];
+
+    if (!data.logs[dateStr]) {
+        data.logs[dateStr] = {};
+    }
+
+    // Apply template workouts (set to 0 if not already logged)
+    workouts.forEach(workout => {
+        if (data.logs[dateStr][workout.exerciseName] === undefined) {
+            data.logs[dateStr][workout.exerciseName] = 0;
+        }
+    });
+
+    saveData(data);
+    return data;
 }

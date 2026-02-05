@@ -5,8 +5,9 @@ import { Calendar } from './Calendar.js';
 import { ExerciseList } from './ExerciseList.js';
 import { YearlyGraph } from './YearlyGraph.js';
 import { AddExerciseForm } from './AddExerciseForm.js';
-import { WorkoutData } from '../types/index.js';
-import { loadData, saveData, updateExercise, formatDate } from '../utils/data.js';
+import { WeeklyTimetable } from './WeeklyTimetable.js';
+import { WorkoutData, DayOfWeek } from '../types/index.js';
+import { loadData, saveData, updateExercise, formatDate, addWeeklyWorkout, removeWeeklyWorkout } from '../utils/data.js';
 import { pushToGithub } from '../utils/git.js';
 
 export const Dashboard: React.FC = () => {
@@ -14,7 +15,7 @@ export const Dashboard: React.FC = () => {
     const [data, setData] = useState<WorkoutData>(loadData());
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentMonth, setCurrentMonth] = useState(new Date());
-    const [mode, setMode] = useState<'dashboard' | 'add'>('dashboard');
+    const [mode, setMode] = useState<'dashboard' | 'add' | 'weekly'>('dashboard');
     const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
     // Reload data periodically
@@ -72,6 +73,11 @@ export const Dashboard: React.FC = () => {
             setMode('add');
         }
 
+        // Weekly timetable
+        if (input === 'w' || input === 'W') {
+            setMode('weekly');
+        }
+
         // Git push
         if (input === 'g' || input === 'G') {
             showStatus('Pushing to GitHub...');
@@ -106,6 +112,15 @@ export const Dashboard: React.FC = () => {
         setMode('dashboard');
     };
 
+    const handleWeeklyUpdate = () => {
+        setData(loadData());
+        showStatus('Weekly timetable updated');
+    };
+
+    const handleWeeklyBack = () => {
+        setMode('dashboard');
+    };
+
     return (
         <Box flexDirection="column" padding={1}>
             {/* Yearly Activity Graph */}
@@ -132,25 +147,38 @@ export const Dashboard: React.FC = () => {
                 </Box>
 
                 {/* Exercise List or Add Form */}
-                <Box flexDirection="column" flexGrow={1}>
-                    {mode === 'dashboard' ? (
-                        <ExerciseList data={data} selectedDate={selectedDate} />
-                    ) : (
-                        <AddExerciseForm
-                            data={data}
-                            onSubmit={handleAddSubmit}
-                            onCancel={handleAddCancel}
-                        />
-                    )}
-                </Box>
+                {mode !== 'weekly' && (
+                    <Box flexDirection="column" flexGrow={1}>
+                        {mode === 'dashboard' ? (
+                            <ExerciseList data={data} selectedDate={selectedDate} />
+                        ) : (
+                            <AddExerciseForm
+                                data={data}
+                                onSubmit={handleAddSubmit}
+                                onCancel={handleAddCancel}
+                            />
+                        )}
+                    </Box>
+                )}
             </Box>
 
+            {/* Weekly Timetable View */}
+            {mode === 'weekly' && (
+                <WeeklyTimetable
+                    data={data}
+                    onBack={handleWeeklyBack}
+                    onUpdate={handleWeeklyUpdate}
+                />
+            )}
+
             {/* Simple help note */}
-            <Box marginTop={1}>
-                <Text dimColor>Run </Text>
-                <Text color="cyan">wout help</Text>
-                <Text dimColor> for available commands</Text>
-            </Box>
+            {mode === 'dashboard' && (
+                <Box marginTop={1}>
+                    <Text dimColor>Run </Text>
+                    <Text color="cyan">wout help</Text>
+                    <Text dimColor> for available commands</Text>
+                </Box>
+            )}
         </Box>
     );
 };

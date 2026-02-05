@@ -4,7 +4,7 @@ import React from 'react';
 import { render } from 'ink';
 import { Command } from 'commander';
 import { Dashboard } from './components/Dashboard.js';
-import { loadData, updateExercise, addExercise, removeExercise, formatDate } from './utils/data.js';
+import { loadData, updateExercise, addExercise, removeExercise, formatDate, addWeeklyWorkout, removeWeeklyWorkout, getWeeklyWorkouts } from './utils/data.js';
 import { pushToGithub, initGitRepo, getGitStatus } from './utils/git.js';
 
 const program = new Command();
@@ -199,6 +199,129 @@ program
 
         removeExercise(name);
         console.log(`✅ Removed exercise: ${name}`);
+    });
+
+// Weekly timetable commands
+program
+    .command('weekly-add <day> <exercise> <reps>')
+    .description('Add workout to weekly timetable (e.g., wout weekly-add monday pushups 50)')
+    .action((day: string, exercise: string, reps: string) => {
+        const validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const dayLower = day.toLowerCase();
+
+        if (!validDays.includes(dayLower)) {
+            console.log(`❌ Invalid day. Use: ${validDays.join(', ')}`);
+            return;
+        }
+
+        const repsNum = parseInt(reps);
+        if (isNaN(repsNum) || repsNum <= 0) {
+            console.log('❌ Reps must be a positive number');
+            return;
+        }
+
+        try {
+            addWeeklyWorkout(dayLower as any, exercise, repsNum);
+            console.log(`✅ Added ${exercise} (${repsNum} reps) to ${dayLower}'s schedule`);
+        } catch (error) {
+            console.log(`❌ ${(error as Error).message}`);
+        }
+    });
+
+program
+    .command('weekly-remove <day> <exercise>')
+    .description('Remove workout from weekly timetable')
+    .action((day: string, exercise: string) => {
+        const validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const dayLower = day.toLowerCase();
+
+        if (!validDays.includes(dayLower)) {
+            console.log(`❌ Invalid day. Use: ${validDays.join(', ')}`);
+            return;
+        }
+
+        removeWeeklyWorkout(dayLower as any, exercise);
+        console.log(`✅ Removed ${exercise} from ${dayLower}'s schedule`);
+    });
+
+program
+    .command('weekly-list [day]')
+    .description('List weekly timetable (optionally for a specific day)')
+    .action((day?: string) => {
+        const data = loadData();
+        const validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+        if (day) {
+            const dayLower = day.toLowerCase();
+            if (!validDays.includes(dayLower)) {
+                console.log(`❌ Invalid day. Use: ${validDays.join(', ')}`);
+                return;
+            }
+
+            const workouts = getWeeklyWorkouts(dayLower as any);
+            console.log(`\n📅 ${dayLower.charAt(0).toUpperCase() + dayLower.slice(1)}'s Workouts`);
+            console.log('═'.repeat(40));
+
+            if (workouts.length === 0) {
+                console.log('  No workouts scheduled');
+            } else {
+                workouts.forEach(w => {
+                    const exercise = data.exercises[w.exerciseName];
+                    console.log(`  ${w.exerciseName.padEnd(15)} - ${w.reps} ${exercise?.unit || 'reps'}`);
+                });
+            }
+            console.log('═'.repeat(40));
+        } else {
+            console.log('\n📅 Weekly Workout Timetable');
+            console.log('═'.repeat(40));
+
+            validDays.forEach(dayName => {
+                const workouts = getWeeklyWorkouts(dayName as any);
+                console.log(`\n${dayName.charAt(0).toUpperCase() + dayName.slice(1)}:`);
+                if (workouts.length === 0) {
+                    console.log('  No workouts scheduled');
+                } else {
+                    workouts.forEach(w => {
+                        const exercise = data.exercises[w.exerciseName];
+                        console.log(`  • ${w.exerciseName} - ${w.reps} ${exercise?.unit || 'reps'}`);
+                    });
+                }
+            });
+
+            console.log('\n' + '═'.repeat(40));
+        }
+    });
+
+program
+    .command('weekly-clear [day]')
+    .description('Clear weekly timetable (optionally for a specific day)')
+    .action((day?: string) => {
+        const data = loadData();
+        const validDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+        if (day) {
+            const dayLower = day.toLowerCase();
+            if (!validDays.includes(dayLower)) {
+                console.log(`❌ Invalid day. Use: ${validDays.join(', ')}`);
+                return;
+            }
+
+            if (data.weeklyTemplate) {
+                data.weeklyTemplate[dayLower as 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday'] = [];
+                const { saveData } = require('./utils/data.js');
+                saveData(data);
+                console.log(`✅ Cleared ${dayLower}'s schedule`);
+            }
+        } else {
+            if (data.weeklyTemplate) {
+                validDays.forEach(dayName => {
+                    data.weeklyTemplate![dayName as 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday'] = [];
+                });
+                const { saveData } = require('./utils/data.js');
+                saveData(data);
+                console.log('✅ Cleared entire weekly timetable');
+            }
+        }
     });
 
 program.parse();

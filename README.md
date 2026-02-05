@@ -36,6 +36,7 @@ Opens an interactive TUI dashboard where you can:
 | `p/n` | Previous/Next month |
 | `t` | Go to today |
 | `a` | Add exercise progress |
+| `w` | Open weekly timetable |
 | `g` | Git push |
 | `q` | Quit |
 
@@ -65,6 +66,42 @@ wout git-status
 wout push
 ```
 
+### Weekly Timetable
+
+Manage your weekly workout schedule (Monday - Saturday):
+
+```bash
+# Add workout to a specific day
+wout weekly-add monday pushups 100
+wout weekly-add wednesday running 5
+
+# Remove workout from a day
+wout weekly-remove monday pushups
+
+# List all weekly workouts
+wout weekly-list
+
+# List workouts for a specific day
+wout weekly-list monday
+
+# Clear a specific day's schedule
+wout weekly-clear monday
+
+# Clear entire weekly timetable
+wout weekly-clear
+```
+
+**Weekly Timetable in Dashboard:**
+- Press `w` in the dashboard to open the weekly timetable editor
+- Use `←/→` to switch between days
+- Use `↑/↓` to select workouts
+- Press `a` to add a new workout
+- Press `e` to edit selected workout
+- Press `d` to delete selected workout
+- Press `q` to return to dashboard
+
+The weekly timetable shows which exercises are scheduled for each day. On the dashboard, scheduled exercises are marked with a 📅 icon.
+
 ## Data Storage
 
 All data is stored in `~/.workout/data.json`:
@@ -80,6 +117,19 @@ All data is stored in `~/.workout/data.json`:
       "running": 5,
       "pushups": 25
     }
+  },
+  "weeklyTemplate": {
+    "monday": [
+      { "exerciseName": "pushups", "reps": 100 },
+      { "exerciseName": "running", "reps": 5 }
+    ],
+    "tuesday": [
+      { "exerciseName": "pullups", "reps": 50 }
+    ],
+    "wednesday": [],
+    "thursday": [],
+    "friday": [],
+    "saturday": []
   }
 }
 ```
